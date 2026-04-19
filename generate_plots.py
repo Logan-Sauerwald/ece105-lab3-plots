@@ -39,3 +39,34 @@ def generate_data(seed):
     sensor_b = rng.normal(27, 4.5, 200)
     timestamps = np.linspace(0, 10, 200)
     return sensor_a, sensor_b, timestamps
+
+
+def plot_scatter(sensor_a, sensor_b, timestamps, ax):
+    """Create a scatter plot of sensor temperature readings over time.
+
+    Plots temperature readings from two sensors against timestamps on the
+    provided Axes object, with Sensor A in blue and Sensor B in orange.
+
+    Parameters
+    ----------
+    sensor_a : array-like
+        Temperature readings from Sensor A in Celsius.
+    sensor_b : array-like
+        Temperature readings from Sensor B in Celsius.
+    timestamps : array-like
+        Time values in seconds, same length as sensor arrays.
+    ax : matplotlib.axes.Axes
+        The Axes object on which to draw the scatter plot.
+
+    Returns
+    -------
+    None
+        Modifies the input Axes object in place.
+    """
+    ax.scatter(timestamps, sensor_a, color='blue', label='Sensor A', alpha=0.7)
+    ax.scatter(timestamps, sensor_b, color='orange', label='Sensor B', alpha=0.7)
+    ax.set_xlabel('Time (seconds)')
+    ax.set_ylabel('Temperature (°C)')
+    ax.set_title('Sensor Temperature Readings Over Time')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
