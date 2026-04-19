@@ -70,3 +70,34 @@ def plot_scatter(sensor_a, sensor_b, timestamps, ax):
     ax.set_title('Sensor Temperature Readings Over Time')
     ax.legend()
     ax.grid(True, alpha=0.3)
+
+
+def plot_histogram(data, column, ax, bins=30, color="steelblue"):
+    """Create a histogram of a specified column from a DataFrame.
+
+    Plots a histogram of the values in the given column of the DataFrame
+    on the provided Axes object with customizable bins and color.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        The DataFrame containing the data to plot.
+    column : str
+        The name of the column in the DataFrame to plot.
+    ax : matplotlib.axes.Axes
+        The Axes object on which to draw the histogram.
+    bins : int, optional
+        Number of bins for the histogram (default is 30).
+    color : str, optional
+        Color of the histogram bars (default is "steelblue").
+
+    Returns
+    -------
+    None
+        Modifies the input Axes object in place.
+    """
+    ax.hist(data[column], bins=bins, color=color, alpha=0.7)
+    ax.set_xlabel(column)
+    ax.set_ylabel('Frequency')
+    ax.set_title(f'Histogram of {column}')
+    ax.grid(True, alpha=0.3)
