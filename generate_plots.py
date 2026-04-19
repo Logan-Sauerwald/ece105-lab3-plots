@@ -10,7 +10,6 @@ Usage
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 
 
 def generate_data(seed):
@@ -74,43 +73,44 @@ def plot_scatter(sensor_a, sensor_b, timestamps, ax):
     ax.grid(True, alpha=0.3)
 
 
-def plot_histogram(data, column, ax, bins=30, color="steelblue"):
-    """Create a histogram of a specified column from a DataFrame.
+def plot_histogram(data, ax, bins=30, color="steelblue", title="Histogram"):
+    """Create a histogram of the provided data array.
 
-    Plots a histogram of the values in the given column of the DataFrame
-    on the provided Axes object with customizable bins and color.
+    Plots a histogram of the values in the data array on the provided
+    Axes object with customizable bins, color, and title.
 
     Parameters
     ----------
-    data : pandas.DataFrame
-        The DataFrame containing the data to plot.
-    column : str
-        The name of the column in the DataFrame to plot.
+    data : array-like
+        The data array to plot.
     ax : matplotlib.axes.Axes
         The Axes object on which to draw the histogram.
     bins : int, optional
         Number of bins for the histogram (default is 30).
     color : str, optional
         Color of the histogram bars (default is "steelblue").
+    title : str, optional
+        Title for the histogram plot (default is "Histogram").
 
     Returns
     -------
     None
         Modifies the input Axes object in place.
     """
-    ax.hist(data[column], bins=bins, color=color, alpha=0.7)
-    ax.set_xlabel(column)
+    ax.hist(data, bins=bins, color=color, alpha=0.7)
+    ax.set_xlabel('Value')
     ax.set_ylabel('Frequency')
-    ax.set_title(f'Histogram of {column}')
+    ax.set_title(title)
     ax.grid(True, alpha=0.3)
 
 
 def main():
     """Generate sensor data and create publication-quality plots.
 
-    Generates synthetic temperature data using a fixed seed, creates a 1x3
-    subplot figure with scatter plot, histogram of Sensor A, and histogram
-    of Sensor B, adjusts the layout, and saves the figure as a PNG file.
+    Generates synthetic temperature data using a fixed seed, creates a 2x2
+    subplot figure with scatter plot, histograms of Sensor A and B, and
+    summary statistics in the bottom-right cell, adjusts the layout, and
+    saves the figure as a PNG file.
 
     Returns
     -------
@@ -118,12 +118,30 @@ def main():
     """
     seed = 1234  # Replace with last 4 digits of your Drexel ID
     sensor_a, sensor_b, timestamps = generate_data(seed)
-    df = pd.DataFrame({'sensor_a': sensor_a, 'sensor_b': sensor_b, 'timestamps': timestamps})
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-    plot_scatter(sensor_a, sensor_b, timestamps, axes[0])
-    plot_histogram(df, 'sensor_a', axes[1], color='blue')
-    plot_histogram(df, 'sensor_b', axes[2], color='orange')
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    plot_scatter(sensor_a, sensor_b, timestamps, axes[0, 0])
+    plot_histogram(sensor_a, axes[0, 1], color='blue', title='Histogram of Sensor A')
+    plot_histogram(sensor_b, axes[1, 0], color='orange', title='Histogram of Sensor B')
+
+    # Summary statistics in bottom-right
+    axes[1, 1].axis('off')
+    stats = f"""
+    Summary Statistics:
+
+    Sensor A:
+    Mean: {np.mean(sensor_a):.2f} °C
+    Std: {np.std(sensor_a):.2f} °C
+
+    Sensor B:
+    Mean: {np.mean(sensor_b):.2f} °C
+    Std: {np.std(sensor_b):.2f} °C
+
+    Overall:
+    Mean: {np.mean(np.concatenate([sensor_a, sensor_b])):.2f} °C
+    """
+    axes[1, 1].text(0.1, 0.5, stats, transform=axes[1, 1].transAxes, fontsize=10, verticalalignment='center')
+
     plt.tight_layout()
     plt.savefig('sensor_analysis.png', dpi=150, bbox_inches='tight')
     plt.close(fig)  # Close to free memory
