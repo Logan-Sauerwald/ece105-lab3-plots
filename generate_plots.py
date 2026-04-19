@@ -9,6 +9,8 @@ Usage
     python generate_plots.py
 """
 import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def generate_data(seed):
@@ -101,3 +103,31 @@ def plot_histogram(data, column, ax, bins=30, color="steelblue"):
     ax.set_ylabel('Frequency')
     ax.set_title(f'Histogram of {column}')
     ax.grid(True, alpha=0.3)
+
+
+def main():
+    """Generate sensor data and create publication-quality plots.
+
+    Generates synthetic temperature data using a fixed seed, creates a 1x3
+    subplot figure with scatter plot, histogram of Sensor A, and histogram
+    of Sensor B, adjusts the layout, and saves the figure as a PNG file.
+
+    Returns
+    -------
+    None
+    """
+    seed = 1234  # Replace with last 4 digits of your Drexel ID
+    sensor_a, sensor_b, timestamps = generate_data(seed)
+    df = pd.DataFrame({'sensor_a': sensor_a, 'sensor_b': sensor_b, 'timestamps': timestamps})
+
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    plot_scatter(sensor_a, sensor_b, timestamps, axes[0])
+    plot_histogram(df, 'sensor_a', axes[1], color='blue')
+    plot_histogram(df, 'sensor_b', axes[2], color='orange')
+    plt.tight_layout()
+    plt.savefig('sensor_analysis.png', dpi=150, bbox_inches='tight')
+    plt.close(fig)  # Close to free memory
+
+
+if __name__ == '__main__':
+    main()
